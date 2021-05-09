@@ -16,13 +16,8 @@ disable_root: true
 package_update: true
 packages:
     - centos-release-scl
+    - git
     - nodejs:12
-
-#move in files
-write_files:
-    - encoding: b64
-      content: ${posdesia_node}
-      path: /tmp/posdesia
 
 #shell commands to stand everything up
 runcmd:
@@ -34,6 +29,6 @@ runcmd:
     #npm deps
     - npm install pm2 -g
     #start application
-    - cd /var/posdesia && npm install
-    - pm2 start index.js
+    - cd /var/posdesia && git clone git@github.com:JoseVillarreal/posdesia.git
+    - npm install && pm2 start index.js
 

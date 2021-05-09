@@ -26,10 +26,9 @@ resource "template_file" "posdesia_web" {
 
   vars {
     posdesia_sshkey = "${var.user_ssh_key}"
-    posdesia_node = "${base64encode(file("${path.module}/../package.json"))}"
-    posdesia_app = "${base64encode(file("${path.module}/../index.js"))}"
   }
 }
+
 #DB variable declaration
 variable postgres_user {
   type = string
