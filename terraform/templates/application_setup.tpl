@@ -22,10 +22,18 @@ packages:
 write_files:
     - encoding: b64
       content: ${posdesia_node}
-      path: /var/posdesia
+      path: /tmp/posdesia
 
 #shell commands to stand everything up
 runcmd:
     #firewall config
+    #general housekeeping
+    - yum update
+    - mkdir /var/posdesia
+    - mv /tmp posdesia /var/posdesia
     #npm deps
+    - npm install pm2 -g
     #start application
+    - cd /var/posdesia && npm install
+    - pm2 start index.js
+
