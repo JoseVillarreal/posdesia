@@ -31,5 +31,8 @@ resource "aws_db_instance" "posdesia_db" {
   engine_version = "12.5-R1"
   identifier = "posdesia-db"
   instance_class = "db.t2.micro"
-  password =
+  password = var.postgres_pass
+  skip_final_snapshot = true
+  storage_encrypted = true
+  username = var.postgres_user
 }
