@@ -1,0 +1,26 @@
+{
+  "name": "posdesia",
+  "version": "1.0.0",
+  "description": "personal poetry collaboration platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoseVillarreal/posdesia.git"
+  },
+  "keywords": [
+    "poetry"
+  ],
+  "author": "Jose Villarreal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoseVillarreal/posdesia/issues"
+  },
+  "homepage": "https://github.com/JoseVillarreal/posdesia#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-pg": "^1.0.1"
+  }
+}
