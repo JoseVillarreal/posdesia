@@ -30,5 +30,11 @@ runcmd:
     - npm install pm2 -g
     #start application
     - cd /var/posdesia && git clone git@github.com:JoseVillarreal/posdesia.git
-    - npm install && pm2 start index.js
+    - npm install
+    - PGUSER={$postgres_user} \
+      PGHOST={$database.endpoint} \
+      PGPASSWORD={$postgres_pass} \
+      PGDATABASE=posdesia-db \
+      PGPORT=3211 \
+    - pm2 start index.js
 

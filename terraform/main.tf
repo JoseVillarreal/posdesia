@@ -58,7 +58,11 @@ resource "aws_db_instance" "posdesia_db" {
   username = var.postgres_user
 }
 
+#get data source for DB endpoint
+data "aws_db_instance" "database" {
+  db_instance_identifier = "posdesia-db"
+}
 #output handle for the DB
 output "rds_endpoint" {
-  value = "${aws_db_instance.posdesia_db.endpoint}"
+  value = "${aws_db_instance.database.endpoint}"
 }
