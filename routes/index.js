@@ -7,7 +7,8 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-/* GET all poems */
+/* GET load poems list view */
+/* consumes poems.loadAllPoems */
 router.get('/poems', function (req, res, next) {
   res.render('poems_list', { title: 'All Poems' });
 });
