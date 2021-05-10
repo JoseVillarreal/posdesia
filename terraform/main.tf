@@ -23,23 +23,25 @@ resource "aws_instance" "posdesia_server" {
 #define the template
 resource "template_file" "posdesia_web" {
   template = "${file("${path.module}/templates/application_setup.tpl")}"
-
-  vars {
-    posdesia_sshkey = "${var.user_ssh_key}"
-  }
 }
 
 #DB variable declaration
 variable postgres_user {
   type = string
+  description = "postgres DB user name"
+  sensitive = true
 }
 
 variable postgres_pass {
   type = string
+  description = "postgres DB password"
+  sensitive = true
 }
 
 variable user_ssh_key {
   type = string
+  description = "github authorized SSH key"
+  sensitive = true
 }
 
 #setup the RDS Postgres DB
@@ -58,5 +60,5 @@ resource "aws_db_instance" "posdesia_db" {
 
 #output handle for the DB
 output "rds_endpoint" {
-  value = "${aws_db_instance.default.endpoint}"
+  value = "${aws_db_instance.posdesia_db.endpoint}"
 }
