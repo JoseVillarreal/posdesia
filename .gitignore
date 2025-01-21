@@ -1,0 +1,12 @@
+*.orig
+*.pyc
+*.swp
+.env
+
+/.vs/
+/.vscode/
+
+.DS_Store
+.DS_Store?
+
+*.lock
