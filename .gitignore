@@ -9,4 +9,6 @@
 .DS_Store
 .DS_Store?
 
-*.lock
+.histfile
+
+/node_modules
