@@ -31,8 +31,30 @@ router
     })
     .get("/poem/:id", (context) => {
         if (books.has(context?.params?.id)) {
-        context.response.body = poem.get(context.params.id);
+            context.response.body = poem.get(context.params.id);
+        })
+    .get("/poem/:id/:comment", (context) => {
+        // TODO: fill in comment fetching logic
     })
+    .get("/poem/:id/:annotation", (context) => {
+        // TODO: fill in annotation fetching logic
+    })
+    .put("/poem/:id/:comment", (context) => {
+        // TODO: fill in comment appending logic
+    })
+    .put("/poem/:id/:annotation", (context) => {
+        // TODO: fill in annotation appending logic
+    })
+    .delete("/poem/:id", (context) => {
+        // TODO: fill in poem deletion logic
+    })
+    .delete("/poem/:id/:comment", (context) => {
+        // TODO: fill in comment deletion logic
+    })
+    .delete("/poem/:id/:annotation", (context) => {
+        // TODO: fill in annotation deletion logic
+    })
+
 
 const app = new Application();
 app.use(router.routes());
