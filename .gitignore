@@ -9,6 +9,6 @@
 .DS_Store
 .DS_Store?
 
-.histfile
+**/.histfile
 
 /node_modules
