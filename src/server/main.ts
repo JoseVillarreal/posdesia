@@ -1,11 +1,13 @@
-import { 
-    Application,
-    Context,
-    helpers,
-    Router,
-} from "https://deno.land/d/oak/mod.ts"
+import { Application } from "jsr:@oak/oak/application";
+import { Router } from "jsr:@oak/oak/router";
+import { Context } from "@oak/oak/context";
+import routeStaticFilesFrom from "./util/routeStaticFilesFrom.ts";
+import Poem from "./poems/poems.ts";
+import { oakCors } from "@tajpouria/cors";
+import Comment from "./comments/comments.ts";
 
-const { getQuery } = helpers;
+export const app = new Application();
+const router = new Router();
 
 const poem = new Map<string, any>();
 poem.set("1", {
@@ -28,53 +30,44 @@ Frozen with snow.`,
     annotations: [],
 });
 
-const router = new Router();
+// TODO: set up oak for html serving
 
-// TODO: set up Fresh for html serving
-
-router.get("/", (ctx: Context) => {
-    ctx.response.body = "Hello World!";
+router.get("/", (context) => {
+    context.response.body = "Hello World!";
 });
 
-router.get("/poem", (ctx: Context) => {
-    ctx.response.body = Array.from(poem.values());
+router.get("/poem", (context) => {
+    context.response.body = Array.from(poem.values());
 });
 
-router.get("/poem/:id", (ctx: Context) => {
-    const { poemId } = getQuery(ctx, { mergeParams: true });
-    ctx.response.body = poem.get(poemId);
+router.get("/poem/:id", (context) => {
+    if (context.params && context.params.id) {
+        const poemObj = Poem.get(context.params.id);
+        poemObj.comments.put(Comment.get(context.params.id));
+        context.response.body = poemObj;
+    }
 });
 
-router.get("/poem/:id/:comment", (ctx: Context) => {
-    const { poemId, commentId } = helpers.getQuery(ctx, { mergeParams: true });
-    ctx.response.body = Object.keys(poem.get(poemId).comments)[commentId];
-});
 
-router.get("/poem/:id/:annotation", (ctx: Context) => {
-    const { poemId, annotationId } = helpers.getQuery(ctx, { mergeParams: true });
-    ctx.response.body = Object.keys(poem.get(poemId).annotations)[annotationId];
+router.get("/poem/:id/:annotation", (context) => {
+    context.response.body = Object.keys(poem.get(poemId).annotations)[annotationId];
 });
 
 // Comment Post
-router.post("/poem/:id/comment", (ctx: Context) => {
-    const { poemId } = helpers.getQuery(ctx, { mergeParams: true });
-    const { value } = ctx.request.body({ type: 'json' });
-
-    let poemObj = poem.get(poemId);
-    let commentObj = {
-        id: poemObj.comments.length + 1,
-        name: value.name,
-        text: value.text,
+router.post("/poem/:id/comment", (context) => {
+    // const { poemId } = helpers.getQuery(context, { mergeParams: true });
+    if (context.params && context.params.id) {
+        let poemObj = Poem.get(context.params.id);
+        poemObj.comments.put(Comment.get(context.params.id));
+        // TODO: write new poem comment to DB
+        context.response.body = poemObj;
     }
-    poemObj.comments.put(commentObj);
-    // TODO: write new poem comment to DB
-    ctx.response.body = poemObj;
 });
 
 // Annotation Post
-router.post("/poem/:id/annotation", (ctx: Context) => {
-    const { poemId } = helpers.getQuery(ctx, { mergeParams: true });
-    const { value } = ctx.request.body({ type: 'json' });
+router.post("/poem/:id/annotation", (context) => {
+    // const { poemId } = helpers.getQuery(context, { mergeParams: true });
+    const { value } = context.request.body({ type: 'json' });
 
     let poemObj = poem.get(poemId);
     let annotationObj = {
@@ -84,12 +77,12 @@ router.post("/poem/:id/annotation", (ctx: Context) => {
     }
     poemObj.annotations.put(annotationObj);
     // TODO: write new poem annotation to DB
-    ctx.response.body = poemObj;
+    context.response.body = poemObj;
 });
 
 // Comment put / comment edit
 router.post("/poem/:id/:comment", (ctx: Context) => {
-    const { poemId, commentId } = helpers.getQuery(ctx, { mergeParams: true });
+    // const { poemId, commentId } = helpers.getQuery(ctx, { mergeParams: true });
     const { value } = ctx.request.body({ type: 'json' });
 
     let poemObj = poem.get(poemId);
@@ -101,7 +94,7 @@ router.post("/poem/:id/:comment", (ctx: Context) => {
 });
 
 router.put("/poem/:id/:annotation", (ctx: Context) => {
-    const { poemId, annotationId } = helpers.getQuery(ctx, { mergeParams: true });
+    // const { poemId, annotationId } = helpers.getQuery(ctx, { mergeParams: true }); 
     const { value } = ctx.request.body({ type: 'json' });
 
     let poemObj = poem.get(poemId);
@@ -124,9 +117,14 @@ router.delete("/poem/:id/:annotation", (ctx: Context) => {
         // TODO: fill in annotation deletion logic
 });
 
-
-const app = new Application();
 app.use(router.routes());
-app.use(router.allowedMethods());
+app.use(oakCors());
+app.use(routeStaticFilesFrom([
+    `${Deno.cwd()}/client/dist`,
+    `${Deno.cwd()}/client/public`,
+]));
 
-await app.listen({ port: 8000 });
+if (import.meta.main) {
+    console.log("Server listening on port http://localhost:8000");
+    await app.listen({ port: 8000 });
+}
