@@ -1,12 +1,13 @@
 {
   "tasks": {
-    "dev": "deno run -A --node-modules-dir=auto npm:vite",
+    "dev": "deno run -A --node-modules-dir=auto npm:vite && deno run server:start",
     "build": "deno run -A --node-modules-dir=auto npm:vite build",
     "server:start": "deno run -A --node-modules-dir --watch ./server/main.ts",
     "serve": "deno task build && deno task server:start"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
+    "@tajpouria/cors": "jsr:@tajpouria/cors@^1.2.1",
     "@types/pg": "npm:@types/pg@^8.11.10",
     "drizzle-kit": "npm:drizzle-kit@^0.30.2",
     "drizzle-orm": "npm:drizzle-orm@^0.38.4",
